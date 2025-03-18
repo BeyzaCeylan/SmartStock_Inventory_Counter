@@ -1,6 +1,6 @@
 # Ürün Tespit Uygulaması
 
-Bu uygulama, bir resimde bulunan ürünleri tespit etmek için YOLOv5 nesne tespit modelini kullanır.
+Bu uygulama, bir resimde bulunan ürünleri tespit etmek için YOLOv8 nesne tespit modelini kullanır.
 
 ## Kurulum
 
@@ -9,7 +9,7 @@ Bu uygulama, bir resimde bulunan ürünleri tespit etmek için YOLOv5 nesne tesp
 pip install -r requirements.txt
 ```
 
-2. İlk çalıştırmada YOLOv5 modeli otomatik olarak indirilecektir.
+2. İlk çalıştırmada YOLOv8 modeli otomatik olarak indirilecektir.
 
 ## Kullanım
 
