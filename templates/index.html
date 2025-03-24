@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akıllı Stok Sayımı</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .upload-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        #preview {
+            max-width: 100%;
+            margin: 20px 0;
+        }
+        #results {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .result-item {
+            margin: 5px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Akıllı Stok Sayımı</h1>
+        
+        <div class="upload-section">
+            <input type="file" id="fileInput" accept="image/*" style="display: none;">
+            <button class="btn" onclick="document.getElementById('fileInput').click()">Resim Seç</button>
+            <button class="btn" onclick="startCamera()">Kamera</button>
+        </div>
+
+        <div class="loading" id="loading">
+            <p>Resim işleniyor...</p>
+        </div>
+
+        <img id="preview" style="display: none;">
+        
+        <div id="results"></div>
+    </div>
+
+    <script>
+        let stream = null;
+
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+                document.getElementById('preview').srcObject = stream;
+                document.getElementById('preview').style.display = 'block';
+            } catch (err) {
+                alert('Kamera erişimi sağlanamadı: ' + err.message);
+            }
+        }
+
+        function stopCamera() {
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop());
+                stream = null;
+                document.getElementById('preview').style.display = 'none';
+            }
+        }
+
+        document.getElementById('fileInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                await processImage(file);
+            }
+        });
+
+        async function processImage(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('results').innerHTML = '';
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                // Sonuçları göster
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.innerHTML = '<h3>Tespit Edilen Nesneler:</h3>';
+                
+                for (const [object, count] of Object.entries(data.object_counts)) {
+                    resultsDiv.innerHTML += `
+                        <div class="result-item">
+                            ${object}: ${count} adet
+                        </div>
+                    `;
+                }
+
+                // İşlenmiş resmi göster
+                document.getElementById('preview').src = data.processed_image;
+                document.getElementById('preview').style.display = 'block';
+
+            } catch (error) {
+                alert('Hata oluştu: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html> 
