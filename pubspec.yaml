@@ -1,0 +1,30 @@
+name: smart_stock_counter
+description: A smart stock counting application using object detection.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  image_picker: ^1.0.7
+  http: ^1.1.0
+  path: ^1.8.3
+  smooth_page_indicator: ^1.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  fonts:
+    - family: Kanit
+      fonts:
+        - asset: assets/fonts/Kanit-SemiBold.ttf
+  uses-material-design: true
+  assets:
+    - assets/images/ 
