@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -9,7 +12,20 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
+
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
   bool agreeTerms = true;
+
+  @override
+  void dispose() {
+   _nameController.dispose();
+   _emailController.dispose();
+   _passwordController.dispose();
+   super.dispose();
+}
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +70,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       // ✅ Full Name
                       TextFormField(
+                        controller: _nameController,
                         validator: (value) => value!.isEmpty ? 'Enter your name' : null,
                         decoration: InputDecoration(
                           labelText: 'Full Name',
@@ -67,6 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       // ✅ Email
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) => value!.isEmpty ? 'Enter your email' : null,
                         decoration: InputDecoration(
                           labelText: 'Email',
@@ -80,6 +98,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                       // ✅ Password
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         validator: (value) => value!.isEmpty ? 'Enter password' : null,
                         decoration: InputDecoration(
@@ -124,37 +143,67 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(height: 20),
 
                       // ✅ Sign up butonu
-                      SizedBox(
-                        width: 200,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate() && agreeTerms) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Creating account...')),
-                              );
-                            } else if (!agreeTerms) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Please accept the terms')),
-                              );
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color.fromARGB(255, 28, 106, 32),
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                          ),
-                          child: const Text(
-                            'Sign up',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
+SizedBox(
+  width: 200,
+  child: ElevatedButton(
+    onPressed: () async {
+      if (_formKey.currentState!.validate() && agreeTerms) {
+        // 🔍 Controller'ların değerlerini yazdır (isteğe bağlı)
+        print("✅ Name: ${_nameController.text}");
+        print("✅ Email: ${_emailController.text}");
+        print("✅ Password: ${_passwordController.text}");
+
+        try {
+          final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+            email: _emailController.text.trim(),
+            password: _passwordController.text.trim(),
+          );
+
+          // 🔔 Başarı mesajı
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Account created successfully!')),
+          );
+
+          print('🟢 User created: ${credential.user?.email}');
+
+          // 🔄 Giriş ekranına yönlendirme
+          Navigator.pop(context);
+
+        } on FirebaseAuthException catch (e) {
+          String errorMessage = 'Registration failed';
+          if (e.code == 'email-already-in-use') {
+            errorMessage = 'This email is already in use';
+          } else if (e.code == 'weak-password') {
+            errorMessage = 'Password is too weak';
+          }
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(errorMessage)),
+          );
+        }
+      } else if (!agreeTerms) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please accept the terms')),
+        );
+      }
+    },
+    style: ElevatedButton.styleFrom(
+      backgroundColor: const Color.fromARGB(255, 28, 106, 32),
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+    ),
+    child: const Text(
+      'Sign up',
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 18,
+      ),
+    ),
+  ),
+),
+const SizedBox(height: 20),
 
                       // ✅ Girişe yönlendirme
                       Row(
