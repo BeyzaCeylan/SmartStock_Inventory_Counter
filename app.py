@@ -18,6 +18,10 @@ rf = Roboflow(api_key=ROBOFLOW_API_KEY)
 project = rf.workspace().project(PROJECT_ID)
 model = project.version(VERSION_NUMBER).model
 
+@app.route('/', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'Backend ayakta!'}), 200
+
 @app.route('/detect', methods=['POST'])
 def detect():
     try:
@@ -31,6 +35,15 @@ def detect():
         # Gelen dosyayı kaydet
         temp_path = 'temp_image.jpg'
         file.save(temp_path)
+        
+        # Fotoğrafı yeniden boyutlandır
+        img = cv2.imread(temp_path)
+
+        if img is None:
+            return jsonify({'error': 'Image read error'}), 400
+
+        resized_img = cv2.resize(img, (640, 640))
+        cv2.imwrite(temp_path, resized_img)
         
         # Nesne tespiti yap
         predictions = model.predict(temp_path, confidence=25, overlap=15).json()
