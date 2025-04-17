@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -14,6 +13,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _surnameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -21,26 +21,67 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   @override
   void dispose() {
-   _nameController.dispose();
-   _emailController.dispose();
-   _passwordController.dispose();
-   super.dispose();
-}
+    _nameController.dispose();
+    _surnameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _signUp() async {
+    if (_formKey.currentState!.validate() && agreeTerms) {
+      try {
+        final credential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+        );
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(credential.user!.uid)
+            .set({
+          'name': _nameController.text.trim(),
+          'surname': _surnameController.text.trim(),
+          'email': _emailController.text.trim(),
+          'photoUrl': '',
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account created successfully!')),
+        );
+
+        Navigator.pop(context);
+      } on FirebaseAuthException catch (e) {
+        String errorMessage = 'Registration failed';
+        if (e.code == 'email-already-in-use') {
+          errorMessage = 'This email is already in use';
+        } else if (e.code == 'weak-password') {
+          errorMessage = 'Password is too weak';
+        }
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(errorMessage)),
+        );
+      }
+    } else if (!agreeTerms) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please accept the terms')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
         children: [
-          // ✅ Arka plan resmi
           Positioned.fill(
             child: Image.asset(
               'assets/images/background.png',
               fit: BoxFit.cover,
             ),
           ),
-
-          // ✅ Beyaz kayıt formu alanı
           Align(
             alignment: Alignment.bottomCenter,
             child: Container(
@@ -67,51 +108,59 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-
-                      // ✅ Full Name
+                      // Ad
                       TextFormField(
                         controller: _nameController,
-                        validator: (value) => value!.isEmpty ? 'Enter your name' : null,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Enter your name' : null,
                         decoration: InputDecoration(
-                          labelText: 'Full Name',
-                          hintText: 'Enter Full Name',
+                          labelText: 'First Name',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-
-                      // ✅ Email
+                      // Soyad
+                      TextFormField(
+                        controller: _surnameController,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Enter your surname' : null,
+                        decoration: InputDecoration(
+                          labelText: 'Last Name',
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Email
                       TextFormField(
                         controller: _emailController,
-                        validator: (value) => value!.isEmpty ? 'Enter your email' : null,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Enter your email' : null,
                         decoration: InputDecoration(
                           labelText: 'Email',
-                          hintText: 'Enter Email',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-
-                      // ✅ Password
+                      // Password
                       TextFormField(
                         controller: _passwordController,
                         obscureText: true,
-                        validator: (value) => value!.isEmpty ? 'Enter password' : null,
+                        validator: (value) =>
+                            value!.isEmpty ? 'Enter password' : null,
                         decoration: InputDecoration(
                           labelText: 'Password',
-                          hintText: 'Enter Password',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                       ),
                       const SizedBox(height: 20),
-
-                      // ✅ Checkbox
                       Row(
                         children: [
                           Checkbox(
@@ -141,71 +190,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ],
                       ),
                       const SizedBox(height: 20),
-
-                      // ✅ Sign up butonu
-SizedBox(
-  width: 200,
-  child: ElevatedButton(
-    onPressed: () async {
-      if (_formKey.currentState!.validate() && agreeTerms) {
-        // 🔍 Controller'ların değerlerini yazdır (isteğe bağlı)
-        print("✅ Name: ${_nameController.text}");
-        print("✅ Email: ${_emailController.text}");
-        print("✅ Password: ${_passwordController.text}");
-
-        try {
-          final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-            email: _emailController.text.trim(),
-            password: _passwordController.text.trim(),
-          );
-
-          // 🔔 Başarı mesajı
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Account created successfully!')),
-          );
-
-          print('🟢 User created: ${credential.user?.email}');
-
-          // 🔄 Giriş ekranına yönlendirme
-          Navigator.pop(context);
-
-        } on FirebaseAuthException catch (e) {
-          String errorMessage = 'Registration failed';
-          if (e.code == 'email-already-in-use') {
-            errorMessage = 'This email is already in use';
-          } else if (e.code == 'weak-password') {
-            errorMessage = 'Password is too weak';
-          }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(errorMessage)),
-          );
-        }
-      } else if (!agreeTerms) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please accept the terms')),
-        );
-      }
-    },
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color.fromARGB(255, 28, 106, 32),
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(15),
-      ),
-    ),
-    child: const Text(
-      'Sign up',
-      style: TextStyle(
-        color: Colors.white,
-        fontSize: 18,
-      ),
-    ),
-  ),
-),
-const SizedBox(height: 20),
-
-                      // ✅ Girişe yönlendirme
+                      SizedBox(
+                        width: 200,
+                        child: ElevatedButton(
+                          onPressed: _signUp,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromARGB(255, 28, 106, 32),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: const Text(
+                            'Sign up',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

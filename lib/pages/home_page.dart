@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/object_detection_service.dart';
+import 'profile_page.dart'; // Profil sayfasını buraya bağlıyoruz
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _image = File(pickedFile.path);
         _isLoading = true;
-        _results = null; // Yeni fotoğraf seçildiğinde sonuçları sıfırla
+        _results = null;
       });
 
       try {
@@ -50,18 +51,28 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SmartStock',
-        style: TextStyle(
-          fontFamily: 'Kanit',
-          fontSize: 30,
-          fontWeight: FontWeight.w600,
-          color: Colors.white
-
-
-        ),),
+        title: const Text(
+          'SmartStock',
+          style: TextStyle(
+            fontFamily: 'Kanit',
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 46, 153, 49),
-
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileEditPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -81,7 +92,7 @@ class _HomePageState extends State<HomePage> {
                           child: Image.file(
                             _image!,
                             width: double.infinity,
-                            fit: BoxFit.fitWidth, // 🔁 Bu satır kırpma sorununu çözüyor
+                            fit: BoxFit.fitWidth,
                           ),
                         ),
                         if (_isLoading)
@@ -123,7 +134,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _isLoading ? null : () => _getImage(ImageSource.camera),
+                      onPressed: _isLoading
+                          ? null
+                          : () => _getImage(ImageSource.camera),
                       icon: const Icon(Icons.camera_alt),
                       label: const Text('Kamera'),
                       style: ElevatedButton.styleFrom(
@@ -134,7 +147,9 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _isLoading ? null : () => _getImage(ImageSource.gallery),
+                      onPressed: _isLoading
+                          ? null
+                          : () => _getImage(ImageSource.gallery),
                       icon: const Icon(Icons.photo_library),
                       label: const Text('Galeri'),
                       style: ElevatedButton.styleFrom(
