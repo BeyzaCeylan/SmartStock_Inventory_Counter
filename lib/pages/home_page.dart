@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import '../services/object_detection_service.dart';
+import 'stock_page.dart';
+import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   final ObjectDetectionService _detectionService = ObjectDetectionService();
   bool _isLoading = false;
   Map<String, dynamic>? _results;
+  int _selectedIndex = 0;
 
   Future<void> _getImage(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
@@ -23,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _image = File(pickedFile.path);
         _isLoading = true;
-        _results = null; // Yeni fotoğraf seçildiğinde sonuçları sıfırla
+        _results = null;
       });
 
       try {
@@ -50,18 +54,28 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('SmartStock',
-        style: TextStyle(
-          fontFamily: 'Kanit',
-          fontSize: 30,
-          fontWeight: FontWeight.w600,
-          color: Colors.white
-
-
-        ),),
+        title: const Text(
+          'SmartStock',
+          style: TextStyle(
+            fontFamily: 'Kanit',
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 46, 153, 49),
-
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.person),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfileEditPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -81,41 +95,48 @@ class _HomePageState extends State<HomePage> {
                           child: Image.file(
                             _image!,
                             width: double.infinity,
-                            fit: BoxFit.fitWidth, // 🔁 Bu satır kırpma sorununu çözüyor
+                            fit: BoxFit.fitWidth,
                           ),
                         ),
-                        if (_isLoading)
-                          const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Column(
-                              children: [
-                                CircularProgressIndicator(),
-                                SizedBox(height: 8),
-                                Text('Nesneler tespit ediliyor...'),
-                              ],
+                      ),
+                    if (_results != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Tespit Edilen Nesneler:',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        if (_results != null)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Tespit Edilen Nesneler:',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                ..._buildResultsList(),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
+                            const SizedBox(height: 8),
+                            ..._buildResultsList(),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : () => _getImage(ImageSource.camera),
+                  icon: const Icon(Icons.camera_alt),
+                  label: const Text('Kamera'),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _isLoading ? null : () => _getImage(ImageSource.gallery),
+                  icon: const Icon(Icons.photo_library),
+                  label: const Text('Galeri'),
                 ),
               const SizedBox(height: 16),
               Row(
@@ -123,7 +144,9 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _isLoading ? null : () => _getImage(ImageSource.camera),
+                      onPressed: _isLoading
+                          ? null
+                          : () => _getImage(ImageSource.camera),
                       icon: const Icon(Icons.camera_alt),
                       label: const Text('Kamera'),
                       style: ElevatedButton.styleFrom(
@@ -134,7 +157,9 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(width: 16),
                   Expanded(
                     child: ElevatedButton.icon(
-                      onPressed: _isLoading ? null : () => _getImage(ImageSource.gallery),
+                      onPressed: _isLoading
+                          ? null
+                          : () => _getImage(ImageSource.gallery),
                       icon: const Icon(Icons.photo_library),
                       label: const Text('Galeri'),
                       style: ElevatedButton.styleFrom(
@@ -153,15 +178,13 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-        ),
+        ],
       ),
     );
   }
 
   List<Widget> _buildResultsList() {
-    if (_results == null || !_results!.containsKey('object_counts')) {
-      return [];
-    }
+    if (_results == null || !_results!.containsKey('object_counts')) return [];
 
     final objectCounts = _results!['object_counts'] as Map<String, dynamic>;
     return objectCounts.entries.map((entry) {
@@ -190,5 +213,39 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'SmartStock',
+          style: TextStyle(
+            fontFamily: 'Kanit',
+            fontSize: 30,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 46, 153, 49),
+      ),
+      body: _buildMainContent(),
+      bottomNavigationBar: CurvedNavigationBar(
+        index: _selectedIndex,
+        backgroundColor: Colors.transparent,
+        color: const Color.fromARGB(255, 46, 153, 49),
+        animationDuration: const Duration(milliseconds: 300),
+        items: const [
+          Icon(Icons.home, color: Colors.white),
+          Icon(Icons.inventory, color: Colors.white),
+          Icon(Icons.person, color: Colors.white),
+        ],
+        onTap: (index) {
+          setState(() => _selectedIndex = index);
+        },
+      ),
+    );
   }
 }
