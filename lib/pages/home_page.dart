@@ -142,6 +142,13 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
+                  ElevatedButton(
+                 onPressed: () {
+                Navigator.pushNamed(context, '/stock');
+            },
+            child: const Text("Stokları Gör"),
+          ),
+
                 ],
               ),
             ],
