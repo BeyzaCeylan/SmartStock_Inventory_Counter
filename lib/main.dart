@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'pages/onboarding_screen.dart';
 import 'pages/auth_selection_page.dart';
+import 'pages/home_page.dart'; // ✅ Ekledik
+import 'pages/profile_page.dart'; // ✅ Ekledik
 import 'package:firebase_core/firebase_core.dart';
 
 void main() async {
@@ -8,7 +10,6 @@ void main() async {
   await Firebase.initializeApp();
   runApp(const MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -23,11 +24,13 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF26A42C)),
         useMaterial3: true,
       ),
-      // Önceki home yerine artık route sistemi kullanıyoruz
+      // 👇 ROUTES aynen kalıyor, sadece HomePage ve Profile'ı ekliyoruz.
       initialRoute: '/',
       routes: {
         '/': (context) => const OnboardingScreen(),
         '/auth': (context) => const AuthSelectionPage(),
+        '/home': (context) => const HomePage(), // ✅ HomePage ekledik
+        '/profile': (context) => ProfileEditPage(), // ✅ Profile ekledik
       },
     );
   }
