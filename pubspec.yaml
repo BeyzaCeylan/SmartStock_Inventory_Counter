@@ -17,8 +17,12 @@ dependencies:
   firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
   cloud_firestore: ^5.6.6
-  firebase_storage: ^12.4.5 # ✅ Storage paketini ekledik!
+  firebase_storage: ^12.4.5
   network_info_plus: ^4.0.0
+  salomon_bottom_bar: ^3.3.2
+  curved_navigation_bar: ^1.0.6
+  
+  
 
 dev_dependencies:
   flutter_test:
