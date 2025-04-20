@@ -33,7 +33,6 @@ class _HomePageState extends State<HomePage> {
       try {
         final results = await _detectionService.detectObjects(_image!);
         if (!mounted) return;
-
         setState(() {
           _results = results;
           _isLoading = false;
@@ -50,55 +49,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'SmartStock',
-          style: TextStyle(
-            fontFamily: 'Kanit',
-            fontSize: 30,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: const Color.fromARGB(255, 46, 153, 49),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProfileEditPage()),
-              );
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (_image != null)
-                Card(
-                  elevation: 4,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Image.file(
-                            _image!,
-                            width: double.infinity,
-                            fit: BoxFit.fitWidth,
-                          ),
-                        ),
+  Widget _buildMainContent() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_image != null)
+            Card(
+              elevation: 4,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        _image!,
+                        width: double.infinity,
+                        fit: BoxFit.fitWidth,
                       ),
+                    ),
                     if (_results != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 16.0),
@@ -138,43 +109,6 @@ class _HomePageState extends State<HomePage> {
                   icon: const Icon(Icons.photo_library),
                   label: const Text('Galeri'),
                 ),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _isLoading
-                          ? null
-                          : () => _getImage(ImageSource.camera),
-                      icon: const Icon(Icons.camera_alt),
-                      label: const Text('Kamera'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _isLoading
-                          ? null
-                          : () => _getImage(ImageSource.gallery),
-                      icon: const Icon(Icons.photo_library),
-                      label: const Text('Galeri'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                    ),
-                  ),
-                  ElevatedButton(
-                 onPressed: () {
-                Navigator.pushNamed(context, '/stock');
-            },
-            child: const Text("Stokları Gör"),
-          ),
-
-                ],
               ),
             ],
           ),
@@ -217,6 +151,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> _pages = [
+      _buildMainContent(),        // index 0
+      const StockPage(),         // index 1
+      ProfileEditPage(),   // index 2
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -231,7 +171,7 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 46, 153, 49),
       ),
-      body: _buildMainContent(),
+      body: _pages[_selectedIndex],
       bottomNavigationBar: CurvedNavigationBar(
         index: _selectedIndex,
         backgroundColor: Colors.transparent,
