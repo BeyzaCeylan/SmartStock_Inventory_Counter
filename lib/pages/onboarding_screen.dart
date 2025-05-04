@@ -68,17 +68,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> with SingleTickerPr
               OnboardingPage(
                 imagePath: 'assets/images/market_cart.png',
                 title: 'SmartStock',
-                description: 'Market ürünlerinizi akıllı şekilde tanıyın.',
+                description: 'Detect your grocery products the smart way.',
               ),
               OnboardingPage(
                 imagePath: 'assets/images/detection.png',
-                title: 'Ürün Algılama',
-                description: 'Fotoğraf çek, ürünleri anında tespit et!',
+                title: 'Product Detection',
+                description: 'Take a picture, Identify products instantly!',
               ),
               OnboardingPage(
                 imagePath: 'assets/images/stats.png',
-                title: 'Stok Takibi',
-                description: 'Raflarını analiz et, stoklarını yönet.',
+                title: 'Stock Tracking',
+                description: 'Analyze products, manage stocks!',
               ),
             ],
           ),

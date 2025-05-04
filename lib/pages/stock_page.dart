@@ -9,7 +9,9 @@ class StockPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Stok Listesi"),
+        title: const Text("Product Stock List",
+        style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         backgroundColor: Colors.green,
       ),
       body: StreamBuilder<QuerySnapshot>(
@@ -46,15 +48,15 @@ class StockPage extends StatelessWidget {
               if (changeType == 'increase') {
                 icon = Icons.arrow_upward;
                 color = Colors.green;
-                statusText = '+$change eklendi';
+                statusText = '+$change increase';
               } else if (changeType == 'decrease') {
                 icon = Icons.arrow_downward;
                 color = Colors.red;
-                statusText = '-${change.abs()} azaldı';
+                statusText = '-${change.abs()} decrease';
               } else {
                 icon = Icons.remove;
                 color = Colors.grey;
-                statusText = 'Stok değişmedi';
+                statusText = 'No Change';
               }
 
               final controller =
@@ -65,12 +67,12 @@ class StockPage extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   leading: Icon(icon, color: color),
-                  title: Text("$name — $quantity adet",
+                  title: Text("$name — $quantity Piece",
                       style: const TextStyle(fontSize: 18)),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("$statusText\nGüncelleme: $formattedDate"),
+                      Text("$statusText\nUpdated: $formattedDate"),
                       const SizedBox(height: 6),
                       Row(
                         children: [

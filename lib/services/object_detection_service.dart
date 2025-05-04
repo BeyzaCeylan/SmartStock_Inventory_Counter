@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:network_info_plus/network_info_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
 class ObjectDetectionService {
   Future<String?> _findAvailableBaseUrl() async {
@@ -61,6 +63,14 @@ class ObjectDetectionService {
       }
     } catch (e) {
       throw Exception('Bir hata oluştu: $e');
+    }
+  }
+
+  Future<void> _loadUserName() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      print('User name: ${doc['name'] ?? user.displayName ?? 'Anonim'}');
     }
   }
 }

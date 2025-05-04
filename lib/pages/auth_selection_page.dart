@@ -79,12 +79,12 @@ class _AuthSelectionPageState extends State<AuthSelectionPage> {
                   key: _formKey,
                   child: Column(
                     children: [
-                      const SizedBox(height: 30),
+                      const SizedBox(height: 10),
                       const Image(
                         image: AssetImage('assets/images/smartstock_logo.png'),
-                        height: 130,
+                        height: 155,
                       ),
-                      const SizedBox(height: 20),
+                      const SizedBox(height: 15),
                       const Text(
                         'Welcome Back!',
                         style: TextStyle(

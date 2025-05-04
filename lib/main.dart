@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smart_stock_counter/pages/summary_page.dart';
 import 'pages/onboarding_screen.dart';
 import 'pages/auth_selection_page.dart';
 import 'pages/import_page.dart'; 
@@ -35,6 +36,13 @@ class MyApp extends StatelessWidget {
         '/stock': (context) => const StockPage(),
         '/home': (context) => const HomePage(), // ✅ HomePage ekledik
         '/profile': (context) => ProfileEditPage(), // ✅ Profile ekledik
+        '/summary' :(context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map;
+          return SummaryPage(
+          totalCounts: args['totalCounts'],
+          userName: args['userName'],
+    );
+  },
       },
     );
   }

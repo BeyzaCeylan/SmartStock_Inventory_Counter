@@ -105,7 +105,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Hesabım',
+        title: const Text('Your Profile',
             style: TextStyle(fontWeight: FontWeight.bold)),
         centerTitle: true,
         backgroundColor: const Color(0xFF26A42C),
@@ -131,58 +131,86 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Fotoğraf değiştirmek için tıklayın',
+                'Click to Change Your Picture',
                 style: TextStyle(
                     color: Colors.green.shade800, fontWeight: FontWeight.w600),
               ),
               const SizedBox(height: 20),
-              _buildTextField(nameController, "Ad", Icons.person,
+              _buildTextField(nameController, "Name", Icons.person,
                   enabled: isEditing),
-              _buildTextField(surnameController, "Soyad", Icons.person_outline,
+              _buildTextField(surnameController, "Surname", Icons.person_outline,
                   enabled: isEditing),
-              _buildTextField(emailController, "E-posta", Icons.email,
+              _buildTextField(emailController, "E-Mail", Icons.email,
                   enabled: false),
-              _buildTextField(phoneController, "Telefon", Icons.phone,
+              _buildTextField(phoneController, "Phone Number", Icons.phone,
                   enabled: isEditing),
               const SizedBox(height: 10),
               GestureDetector(
                 onTap: _changePassword,
                 child: const Text(
-                  'Şifrenizi değiştirmek için tıklayın',
+                  'Click to Change Your Password',
                   style: TextStyle(
                       color: Colors.green, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: isEditing ? _updateProfile : null,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor:
-                      isEditing ? const Color(0xFF26A42C) : Colors.grey,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
-                child: const Text('Kaydet', style: TextStyle(fontSize: 18)),
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: isEditing ? _updateProfile : null,
+                      icon: const Icon(Icons.save, size: 22),
+                      label: const Text('Save', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isEditing ? Color(0xFF26A42C) : Colors.grey,
+                        foregroundColor: Colors.white,
+                        elevation: 4,
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        shadowColor: Colors.greenAccent,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() => isEditing = true);
+                      },
+                      icon: const Icon(Icons.edit, size: 22),
+                      label: const Text('Edit Profile', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: Color(0xFF26A42C),
+                        elevation: 4,
+                        side: const BorderSide(color: Color(0xFF26A42C), width: 2),
+                        padding: const EdgeInsets.symmetric(vertical: 18),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        shadowColor: Colors.greenAccent,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {
-                  setState(() => isEditing = true);
-                },
-                child: const Text(
-                  'Bilgileri Düzenle',
-                  style: TextStyle(
-                      color: Colors.green, fontWeight: FontWeight.bold),
-                ),
-              ),
-              const SizedBox(height: 30),
-              ElevatedButton(
+              const SizedBox(height: 20),
+              ElevatedButton.icon(
                 onPressed: _logout,
+                icon: const Icon(Icons.logout, size: 22),
+                label: const Text('Log Out', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: Colors.redAccent,
+                  foregroundColor: Colors.white,
+                  elevation: 4,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  shadowColor: Colors.redAccent,
                 ),
-                child: const Text('Çıkış Yap',
-                    style: TextStyle(fontSize: 18, color: Colors.white)),
               ),
             ],
           ),
@@ -207,4 +235,4 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       ),
     );
   }
-}
+} 
