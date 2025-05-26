@@ -47,9 +47,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
           'photoUrl': '',
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account created successfully!')),
-        );
+        await credential.user!.sendEmailVerification();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Account created successfully! Please check your email to verify your account.',
+          ),
+        ),
+      );
 
         Navigator.pop(context);
       } on FirebaseAuthException catch (e) {
