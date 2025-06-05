@@ -67,10 +67,10 @@ class _SummaryPageState extends State<SummaryPage> {
           'change': change,
           'changeType': changeType,
           'updatedAt': DateTime.now().toIso8601String(),
-          'userName': freshUserName, // 🔥 Değiştirilen kısım burası
+          'userName': freshUserName, // 
         });
       } else {
-        print('Firestore\'da \"$product\" adli urun bulunamadi.');
+        print('No product named \"$product\" found in Firestore');
       }
     }
 
@@ -121,14 +121,14 @@ class _SummaryPageState extends State<SummaryPage> {
                 MaterialPageRoute(builder: (context) => const HomePage()),
               );
             },
-            child: const Text('İptal'),
+            child: const Text('Cancel'),
           ),
           TextButton(
             onPressed: () async {
               Navigator.of(context).pop();
               await _updateStock(context);
             },
-            child: const Text('Güncelle'),
+            child: const Text('Update'),
           ),
         ],
       ),

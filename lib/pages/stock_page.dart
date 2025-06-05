@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class StockPage extends StatelessWidget {
   const StockPage({super.key});
@@ -10,7 +11,7 @@ class StockPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Product Stock List",
-        style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600),
         ),
         backgroundColor: Colors.green,
       ),
@@ -40,6 +41,7 @@ class StockPage extends StatelessWidget {
               final formattedDate = updatedAt != null
                   ? DateFormat("dd.MM.yyyy HH:mm").format(updatedAt)
                   : 'N/A';
+              final updatedBy = data['userName'] ?? 'Unknown';
 
               IconData icon;
               Color color;
@@ -59,20 +61,21 @@ class StockPage extends StatelessWidget {
                 statusText = 'No Change';
               }
 
-              final controller =
-                  TextEditingController(text: '1'); // varsayılan giriş
+              final controller = TextEditingController(text: '1');
 
               return Card(
-                margin:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 child: ListTile(
                   leading: Icon(icon, color: color),
-                  title: Text("$name — $quantity Piece",
-                      style: const TextStyle(fontSize: 18)),
+                  title: Text(
+                    "$name — $quantity Piece",
+                    style: const TextStyle(fontSize: 18),
+                  ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("$statusText\nUpdated: $formattedDate"),
+                      Text(
+                          "$statusText\nUpdated: $formattedDate"),
                       const SizedBox(height: 6),
                       Row(
                         children: [
@@ -154,13 +157,27 @@ class StockPage extends StatelessWidget {
     if (difference > 0) changeType = "increase";
     else if (difference < 0) changeType = "decrease";
 
+    final currentUser = FirebaseAuth.instance.currentUser;
+    String updatedBy = "Unknown";
+
+    if (currentUser != null) {
+      final userDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(currentUser.uid)
+          .get();
+
+      if (userDoc.exists) {
+        updatedBy = userDoc.data()?['name'] ?? currentUser.email ?? "Unknown";
+      }
+    }
+
     await docRef.update({
       'quantity': newQuantity,
       'previousQty': oldQuantity,
       'change': difference,
       'changeType': changeType,
       'updatedAt': DateTime.now().toIso8601String(),
+      'userName': updatedBy, // 🔹 Sadece bu alanı yazıyoruz
     });
   }
 }
-

@@ -51,7 +51,7 @@ class ObjectDetectionService {
       if (response.statusCode == 200) {
         final result = json.decode(responseData);
 
-        // Firestore'a kayıt
+        // Register to Firestore
         await FirebaseFirestore.instance.collection('detections').add({
           'timestamp': Timestamp.now(),
           'object_counts': result['object_counts'],
