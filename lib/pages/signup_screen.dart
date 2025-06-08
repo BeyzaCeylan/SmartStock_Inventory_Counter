@@ -49,15 +49,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
         await credential.user!.sendEmailVerification();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Account created successfully! Please check your email to verify your account.',
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'Account created! Please check your email to verify your account.',
+            ),
           ),
-        ),
-      );
+        );
 
-        Navigator.pop(context);
+        // Giriş yaptı ama email onaylı değilse çıkış yapıyoruz
+        await FirebaseAuth.instance.signOut();
+
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return AlertDialog(
+              title: const Text("Verify your email"),
+              content: const Text(
+                "A verification email has been sent to your address. Please verify your email before logging in.",
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // AlertDialog kapanır
+                    Navigator.pop(context); // Login sayfasına geri döner
+                  },
+                  child: const Text("OK"),
+                ),
+              ],
+            );
+          },
+        );
       } on FirebaseAuthException catch (e) {
         String errorMessage = 'Registration failed';
         if (e.code == 'email-already-in-use') {
@@ -114,7 +137,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      // Ad
                       TextFormField(
                         controller: _nameController,
                         validator: (value) =>
@@ -127,7 +149,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Soyad
                       TextFormField(
                         controller: _surnameController,
                         validator: (value) =>
@@ -140,7 +161,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Email
                       TextFormField(
                         controller: _emailController,
                         validator: (value) =>
@@ -153,7 +173,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // Password
                       TextFormField(
                         controller: _passwordController,
                         obscureText: true,

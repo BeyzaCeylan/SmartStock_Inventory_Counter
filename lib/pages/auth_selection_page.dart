@@ -26,10 +26,24 @@ class _AuthSelectionPageState extends State<AuthSelectionPage> {
   Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
+        UserCredential userCredential = await FirebaseAuth.instance
+            .signInWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
         );
+
+        User? user = userCredential.user;
+
+        if (user != null && !user.emailVerified) {
+          await FirebaseAuth.instance.signOut(); // Giriş yapma
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please verify your email before logging in.'),
+              backgroundColor: Colors.red,
+            ),
+          );
+          return;
+        }
 
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Login successful!')),
@@ -141,8 +155,8 @@ class _AuthSelectionPageState extends State<AuthSelectionPage> {
                                 borderRadius: BorderRadius.circular(15)),
                           ),
                           child: const Text('Login',
-                              style:
-                                  TextStyle(fontSize: 18, color: Colors.white)),
+                              style: TextStyle(
+                                  fontSize: 18, color: Colors.white)),
                         ),
                       ),
                       const SizedBox(height: 20),
@@ -156,7 +170,8 @@ class _AuthSelectionPageState extends State<AuthSelectionPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const SignUpScreen()),
+                                    builder: (context) =>
+                                        const SignUpScreen()),
                               );
                             },
                             child: const Text(
