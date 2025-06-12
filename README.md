@@ -6,6 +6,7 @@ SmartStock, akıllı telefon üzerinden görsel tabanlı ürün tanıma ve stok 
 
 - 📷 Kamera veya galeri üzerinden görsel yükleme
 - 🧠 YOLOv8 ile görselden otomatik ürün tanıma
+- 🤖 Manuel Stok Kontrolü
 - 🔄 Firebase Firestore ile stok takibi ve güncelleme
 - 🔐 Firebase Authentication ile kullanıcı doğrulama
 - 🌐 Flask API ile model tahmin servisi
@@ -27,7 +28,7 @@ SmartStock, özellikle küçük marketler ve bireysel kullanıcılar için barko
 
 ## 🧪 Sistem Performansı
 
-- 🎯 **Model doğruluğu:** mAP@50: 91.3%
+- 🎯 **Model doğruluğu:** mAP@50: 92.8%, Precision: 92.4%, Recall: 92.2%
 - ⚡ Gerçek Android cihazda test edildi
 - 🏪 Süpermarket ortamında kullanıcı testleri yapıldı
 - 🌥 Işık değişimlerine karşı dayanıklı tespit yeteneği
@@ -56,11 +57,22 @@ SmartStock, özellikle küçük marketler ve bireysel kullanıcılar için barko
 ## 📁 Proje Yapısı
 
 SmartStock/
-├── backend/         # Flask API & YOLOv8 modeli
-├── frontend/        # Flutter mobil uygulama
-├── screenshots/     # Ekran görüntüleri
-├── requirements.txt
-└── README.md
+├── backend/            # Flask API & YOLOv8 modeli
+│   ├── app.py
+│   ├── model/          # Eğitimli YOLOv8 ağırlıkları
+│   └── utils/          # Görüntü işleme yardımcıları
+│
+├── frontend/           # Flutter mobil uygulama
+│   ├── lib/
+│   │   ├── pages/
+│   │   ├── services/
+│   │   ├── widgets/
+│   │   └── main.dart
+│   └── pubspec.yaml
+│
+├── requirements.txt    # Flask API bağımlılıkları
+└── README.md           # Proje tanıtım dosyası
+
 
 ## 👥 Ekip Üyeleri
 - [Aleyna Keskin](https://github.com/Aleynakeskinn)
