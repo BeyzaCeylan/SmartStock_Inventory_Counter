@@ -56,6 +56,7 @@ SmartStock, özellikle küçük marketler ve bireysel kullanıcılar için barko
 
 ## 📁 Proje Yapısı
 
+```
 SmartStock/
 ├── backend/            # Flask API & YOLOv8 modeli
 │   ├── app.py
@@ -71,8 +72,8 @@ SmartStock/
 │   └── pubspec.yaml
 │
 ├── requirements.txt    # Flask API bağımlılıkları
-└── README.md           # Proje tanıtım dosyası
-
+└── README.md           # Proje tanıtım dosyası 
+```
 
 ## 👥 Ekip Üyeleri
 - [Aleyna Keskin](https://github.com/Aleynakeskinn)
