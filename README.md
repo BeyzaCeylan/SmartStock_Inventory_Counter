@@ -1,35 +1,71 @@
-# Ürün Tespit Uygulaması
+# SmartStock 📦📷
 
-Bu uygulama, bir resimde bulunan ürünleri tespit etmek için YOLOv8 nesne tespit modelini kullanır.
+SmartStock, akıllı telefon üzerinden görsel tabanlı ürün tanıma ve stok sayımı gerçekleştiren yapay zekâ destekli bir mobil stok takip uygulamasıdır. Proje, nesne tanıma için YOLOv8 modeli ve Flutter tabanlı bir kullanıcı arayüzü ile geliştirilmiştir. Firebase entegrasyonu sayesinde veriler güvenli bir şekilde bulutta saklanır ve yönetilir.
 
-## Kurulum
+## 🚀 Özellikler
 
-1. Gerekli paketleri yükleyin:
-```
-pip install -r requirements.txt
-```
+- 📷 Kamera veya galeri üzerinden görsel yükleme
+- 🧠 YOLOv8 ile görselden otomatik ürün tanıma
+- 🔄 Firebase Firestore ile stok takibi ve güncelleme
+- 🔐 Firebase Authentication ile kullanıcı doğrulama
+- 🌐 Flask API ile model tahmin servisi
 
-2. İlk çalıştırmada YOLOv8 modeli otomatik olarak indirilecektir.
+## 🎯 Proje Amacı
 
-## Kullanım
+SmartStock, özellikle küçük marketler ve bireysel kullanıcılar için barkodsuz ürünlerin bile otomatik olarak sayılabildiği, kullanıcı dostu bir stok kontrol sistemi sunar. RFID gibi pahalı sistemlere alternatif olarak geliştirilmiştir.
 
-1. Tespit etmek istediğiniz ürünlerin bulunduğu resmi projenin ana dizinine koyun (örneğin: `test.jpg`).
+## 🧱 Kullanılan Teknolojiler
 
-2. Kodu çalıştırın:
-```
-python object_detection.py
-```
+| Teknoloji     | Açıklama                                              |
+|---------------|--------------------------------------------------------|
+| Flutter       | Mobil uygulama arayüzü (Android)                      |
+| Firebase      | Authentication, Firestore (veri saklama), Storage    |
+| YOLOv8        | Görsel tabanlı nesne tanıma modeli                   |
+| Roboflow      | Veri kümesi etiketleme ve model eğitimi ortamı       |
+| Flask         | Python tabanlı API sunucusu                          |
+| Figma         | UI/UX tasarımı                                        |
 
-3. Varsayılan olarak kod `test.jpg` dosyasını arayacaktır. Farklı bir dosya kullanmak için `object_detection.py` dosyasını açıp `image_path` değişkenini değiştirin.
+## 🧪 Sistem Performansı
 
-## Çıktı
+- 🎯 **Model doğruluğu:** mAP@50: 91.3%
+- ⚡ Gerçek Android cihazda test edildi
+- 🏪 Süpermarket ortamında kullanıcı testleri yapıldı
+- 🌥 Işık değişimlerine karşı dayanıklı tespit yeteneği
 
-- Program, tespit edilen ürünlerin etrafına yeşil bounding box'lar çizer.
-- Her bounding box'ın üstünde tespit güven değeri gösterilir.
-- Resmin üst kısmında toplam tespit edilen ürün sayısı gösterilir.
-- Tespit sonuçları konsola yazdırılır.
-- İşlenmiş resim, orijinal dosya adının sonuna "_detected" eklenerek kaydedilir.
+## 🔧 Kurulum
 
-## Not
+1. Reposu klonlayın:
+   ```bash
+   git clone https://github.com/kullaniciadi/SmartStock.git
+   cd SmartStock
+   
+2. Python API için ortamı kur:
+   cd backend
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install -r requirements.txt
+   export $(cat .env | xargs)
+   python app/app.py
 
-Bu uygulama, YOLOv5 modelinin tanıyabildiği nesneler arasından ürün olabilecek olanları (şişe, bardak, kitap, vb.) tespit eder. Eğer tüm nesneleri tespit etmek isterseniz, kodda bulunan `product_classes` listesini kaldırabilirsiniz. 
+3. Flutter tarafı için:
+   cd frontend
+   flutter pub get
+   flutter run
+
+
+## 📁 Proje Yapısı
+
+SmartStock/
+├── backend/         # Flask API & YOLOv8 modeli
+├── frontend/        # Flutter mobil uygulama
+├── screenshots/     # Ekran görüntüleri
+├── requirements.txt
+└── README.md
+
+## 👥 Ekip Üyeleri
+- [Aleyna Keskin](https://github.com/Aleynakeskinn)
+- [Mustafa Karagöz](https://github.com/MustafaKaragz)
+
+-Danışman: [Dr. Necip Gökhan Kasapoğlu]
+
+
