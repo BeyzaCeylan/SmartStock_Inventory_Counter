@@ -1,5 +1,14 @@
 # SmartStock 📦📷
 
+## 📸 Screenshots
+
+<p float="left">
+  <img src="screenshots/login.png" width="230" />
+  <img src="screenshots/homepage.png" width="230" />
+  <img src="screenshots/detection.png" width="230" />
+  <img src="screenshots/profilepage.png" width="230" />
+</p>
+
 SmartStock, akıllı telefon üzerinden görsel tabanlı ürün tanıma ve stok sayımı gerçekleştiren yapay zekâ destekli bir mobil stok takip uygulamasıdır. Proje, nesne tanıma için YOLOv8 modeli ve Flutter tabanlı bir kullanıcı arayüzü ile geliştirilmiştir. Firebase entegrasyonu sayesinde veriler güvenli bir şekilde bulutta saklanır ve yönetilir.
 
 ## 🚀 Özellikler
